@@ -1,22 +1,21 @@
-version: '3.8'
 services:
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+    container_name: personal-finance-dashboard-backend
     ports:
-      - '8000:8000'
+      - "8000:8000"
     environment:
-      - DATABASE_URL=sqlite:///./finance.db
-      - SECRET_KEY=supersecretdevkey
-      - MOCK_BANK_URL=http://104.248.41.128:8000
+      DATABASE_URL: sqlite:///data/finance.db
+      SECRET_KEY: supersecretdevkey
+      MOCK_BANK_URL: http://104.248.41.128:8000
     volumes:
       - ./backend/app:/app/app
-      - ./backend/finance.db:/app/finance.db
+      - ./backend/data:/app/data
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+    container_name: personal-finance-dashboard-frontend
     ports:
-      - '3000:3000'
-    environment:
-      - VITE_API_URL=http://localhost:8000
-    depends_on:
-      - backend
+      - "3000:3000"

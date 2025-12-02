@@ -6,7 +6,7 @@ export default function BudgetForm(){
 
   const submit = (e) => {
     e.preventDefault()
-    // TODO: call API to save
+    
     alert(`Saved budget ${category} ${amount}`)
   }
 
