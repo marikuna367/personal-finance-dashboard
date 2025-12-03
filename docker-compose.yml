@@ -8,7 +8,8 @@ services:
     environment:
       DATABASE_URL: sqlite:///data/finance.db
       SECRET_KEY: supersecretdevkey
-      MOCK_BANK_URL: http://104.248.41.128:8000
+      # EXTERNAL_BANK_URL: Set to a third-party bank provider URL if available
+      # Leave empty/unset to use local mock data
     volumes:
       - ./backend/app:/app/app
       - ./backend/data:/app/data
