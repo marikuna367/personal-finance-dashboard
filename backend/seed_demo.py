@@ -1,4 +1,4 @@
-# 
+#
 
 from sqlmodel import Session, select
 from app.db import engine, SQLModel
@@ -11,8 +11,10 @@ SQLModel.metadata.create_all(engine)
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
+
 
 # Open session
 with Session(engine) as session:
@@ -21,11 +23,14 @@ with Session(engine) as session:
     existing_user = session.exec(statement).first()
 
     if existing_user:
-        print("Demo user already exists.")
+        # Update password to demo123 for consistency
+        existing_user.hashed_password = get_password_hash("demo123")
+        session.add(existing_user)
+        session.commit()
+        print("Demo user password updated to 'demo123'.")
     else:
         demo = User(
-            email="demo@example.com",
-            hashed_password=get_password_hash("password")
+            email="demo@example.com", hashed_password=get_password_hash("demo123")
         )
         session.add(demo)
         session.commit()

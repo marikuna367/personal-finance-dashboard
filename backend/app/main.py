@@ -7,6 +7,9 @@ app = FastAPI(title="Personal Finance Dashboard API")
 
 origins = [
     "http://localhost:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
 ]
 
 app.add_middleware(
@@ -17,13 +20,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.on_event("startup")
 def on_startup():
     init_db()
 
+
 app.include_router(auth.router)
 app.include_router(finances.router)
 
-@app.get('/')
+
+@app.get("/")
 def root():
     return {"ok": True, "message": "Personal Finance API"}
