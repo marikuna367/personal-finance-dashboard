@@ -14,9 +14,8 @@
     
     # Build Vite for production
     RUN npm run build
-    
-    
-    # ---- Runtime stage ----
+
+     # ---- Runtime stage ----
     FROM node:18-slim AS runtime
     
     WORKDIR /app

@@ -1,23 +1,30 @@
-import React, { useState } from 'react'
-import axios from 'axios'
+import React, { useState } from 'react';
+import api from '../api';
 
 export default function Header() {
-  const [email, setEmail] = useState('demo@example.com')
-  const [password, setPassword] = useState('password')
+  const [email, setEmail] = useState('demo@example.com');
+  const [password, setPassword] = useState('password');
 
   const handleSignIn = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/auth/login', {
-        email,
-        password
-      })
-      console.log('Login successful', response.data)
-      alert('Signed in successfully!')
+      const response = await api.post('/auth/login', { email, password });
+      if (response?.data?.access_token) {
+        localStorage.setItem('token', response.data.access_token);
+        alert('Signed in successfully!');
+        window.location.reload();
+      } else {
+        alert('Sign in failed');
+      }
     } catch (error) {
-      console.error('Login failed', error)
-      alert('Sign in failed')
+      console.error('Login failed', error);
+      alert('Sign in failed');
     }
-  }
+  };
+
+  const handleSignOut = () => {
+    localStorage.removeItem('token');
+    window.location.reload();
+  };
 
   return (
     <header className="bg-white shadow p-4 mb-6">
@@ -38,14 +45,14 @@ export default function Header() {
             onChange={(e) => setPassword(e.target.value)}
             className="border px-2 py-1 rounded"
           />
-          <button
-            className="px-3 py-1 border rounded"
-            onClick={handleSignIn}
-          >
+          <button className="px-3 py-1 border rounded" onClick={handleSignIn}>
             Sign in
+          </button>
+          <button className="px-3 py-1 border rounded" onClick={handleSignOut}>
+            Sign out
           </button>
         </div>
       </div>
     </header>
-  )
+  );
 }

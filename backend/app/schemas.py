@@ -22,10 +22,14 @@ class BankAccountLink(BaseModel):
     name: Optional[str] = None
 
 class TransactionIn(BaseModel):
+    account_id: int
     amount: float
-    date: datetime
-    description: Optional[str] = None
     category: Optional[str] = None
+    description: Optional[str] = None
+    date: Optional[datetime] = None
+
+    class Config:
+        orm_mode = True
 
 class TransactionOut(TransactionIn):
     id: int

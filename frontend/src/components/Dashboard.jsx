@@ -1,32 +1,32 @@
-import React, { useEffect, useState } from 'react'
-import API from '../api'
-import TransactionsTable from './TransactionsTable'
-import BudgetForm from './BudgetForm'
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
+import React, { useEffect, useState } from 'react';
+import api from '../api';
+import TransactionsTable from './TransactionsTable';
+import BudgetForm from './BudgetForm';
+import QuickActions from './QuickActions';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
-export default function Dashboard(){
-  const [transactions, setTransactions] = useState([])
-  const [accounts, setAccounts] = useState([])
+export default function Dashboard() {
+  const [transactions, setTransactions] = useState([]);
+  const [accounts, setAccounts] = useState([]);
 
-  useEffect(()=>{
-    async function load(){
-      try{
-        const accountsRes = await API.get('/finances/linked-accounts').catch(()=>({data:[]}))
-        setAccounts(accountsRes.data || [])
-
-        if(accountsRes.data && accountsRes.data.length>0){
-          const id = accountsRes.data[0].id
-          const tx = await API.get(`/finances/transactions/${id}`).catch(()=>({data:[]}))
-          setTransactions(tx.data || [])
+  useEffect(() => {
+    async function load() {
+      try {
+        const accountsRes = await api.get('/finances/linked-accounts').catch(() => ({ data: [] }));
+        setAccounts(accountsRes.data || []);
+        if (accountsRes.data && accountsRes.data.length > 0) {
+          const id = accountsRes.data[0].id;
+          const tx = await api.get(`/finances/transactions/${id}`).catch(() => ({ data: [] }));
+          setTransactions(tx.data || []);
         }
-      }catch(e){
-        console.error(e)
+      } catch (e) {
+        console.error(e);
       }
     }
-    load()
-  }, [])
+    load();
+  }, []);
 
-  const chartData = transactions.slice(0, 30).map(t => ({ date: new Date(t.date).toLocaleDateString(), amount: t.amount }))
+  const chartData = transactions.slice(0, 30).map((t) => ({ date: new Date(t.date).toLocaleDateString(), amount: t.amount }));
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -53,12 +53,7 @@ export default function Dashboard(){
 
       <aside>
         <div className="bg-white p-4 rounded shadow mb-6">
-          <h3 className="font-medium">Quick Actions</h3>
-          <div className="mt-3 flex flex-col gap-2">
-            <button className="p-2 border rounded">Link Bank Account</button>
-            <button className="p-2 border rounded">Sync Accounts</button>
-            <button className="p-2 border rounded">Create Transaction</button>
-          </div>
+          <QuickActions />
         </div>
 
         <div className="bg-white p-4 rounded shadow">
@@ -67,5 +62,5 @@ export default function Dashboard(){
         </div>
       </aside>
     </div>
-  )
+  );
 }

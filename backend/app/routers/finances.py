@@ -14,19 +14,16 @@ def list_linked_accounts(user_id: int = 1):
         ).all()
         return accounts
 
-
 @router.post('/link-account')
 async def link_account(payload: schemas.BankAccountLink, user_id: int = 1):
     with Session(db.engine) as session:
         account = models.BankAccount(
             owner_id=user_id,
-            provider_account_id=payload.provider_account_id,
+            provider_account_id=str(payload.provider_account_id),
             name=payload.name or "Linked Account"
         )
-
         try:
             info = await get_account_info(payload.provider_account_id)
-            # mock bank AccountOut has 'balance' per schema
             account.balance = info.get('balance', 0)
         except Exception:
             account.balance = 0
@@ -42,15 +39,12 @@ async def sync_account(account_id: int, user_id: int = 1):
         account = session.get(models.BankAccount, account_id)
         if not account:
             raise HTTPException(status_code=404, detail='Account not found')
-
         try:
             provider_txns = await get_transactions(account.provider_account_id)
         except Exception:
             raise HTTPException(status_code=502, detail='Failed to fetch from provider')
-
         added = 0
         for t in provider_txns:
-            # provider txn id field per schema is 'id'
             provider_id = t.get('id')
             exists = session.exec(
                 select(models.Transaction).where(models.Transaction.provider_txn_id == provider_id)
@@ -58,21 +52,17 @@ async def sync_account(account_id: int, user_id: int = 1):
             if exists:
                 continue
 
-            
             date_str = t.get('date') or t.get('timestamp') or t.get('created_at') or None
             if date_str:
                 try:
                     txn_date = datetime.fromisoformat(date_str)
                 except Exception:
-                    
                     try:
-                        
                         txn_date = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
                     except Exception:
                         txn_date = datetime.utcnow()
             else:
                 txn_date = datetime.utcnow()
-
             txn = models.Transaction(
                 account_id=account.id,
                 provider_txn_id=provider_id,
@@ -97,7 +87,6 @@ def list_txns(account_id: int):
         ).all()
         return txns
 
-
 @router.post('/transactions/{account_id}')
 def create_txn(account_id: int, txn_in: schemas.TransactionIn):
     with Session(db.engine) as session:
@@ -113,13 +102,11 @@ def create_txn(account_id: int, txn_in: schemas.TransactionIn):
         session.refresh(txn)
     return txn
 
-
 @router.post('/transactions')
-def create_txn_body(txn: schemas.TransactionIn):
-    
+async def create_txn_body(txn: schemas.TransactionIn):
     with Session(db.engine) as session:
         new_txn = models.Transaction(
-            account_id=txn.account_id,
+            account_id=getattr(txn, "account_id", None),
             amount=txn.amount,
             date=txn.date,
             description=txn.description,
@@ -128,13 +115,8 @@ def create_txn_body(txn: schemas.TransactionIn):
         session.add(new_txn)
         session.commit()
         session.refresh(new_txn)
-
-        
         try:
-            
-            provider_create_transaction(txn.account_id, txn.amount, txn.category, txn.description)
+            await provider_create_transaction(new_txn.account_id, new_txn.amount, new_txn.category or "", new_txn.description or "")
         except Exception:
-            
             pass
-
         return new_txn

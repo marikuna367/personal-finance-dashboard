@@ -1,46 +1,49 @@
 import React, { useState } from "react";
 import Dashboard from "./components/Dashboard";
 import Header from "./components/Header";
+import api from "./api";
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(Boolean(localStorage.getItem("token")));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSignIn = async () => {
     try {
-      const res = await fetch("http://localhost:8000/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      if (!res.ok) throw new Error("Login failed");
-
-      const data = await res.json();
-      console.log("Token:", data.access_token);
-      setIsLoggedIn(true); // now show dashboard
+      const res = await api.post("/auth/login", { email, password });
+      if (!res || !res.data || !res.data.access_token) {
+        throw new Error("Login failed");
+      }
+      localStorage.setItem("token", res.data.access_token);
+      setIsLoggedIn(true);
     } catch (err) {
-      alert(err.message);
+      alert(err?.response?.data?.detail ?? err.message ?? "Login failed");
     }
   };
 
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
-        <h1>Personal Finance Dashboard</h1>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button onClick={handleSignIn}>Sign In</button>
+        <div className="bg-white p-6 rounded shadow w-full max-w-md">
+          <h1 className="text-2xl mb-4">Personal Finance Dashboard</h1>
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full p-2 border rounded mb-2"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-full p-2 border rounded mb-4"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button onClick={handleSignIn} className="w-full py-2 bg-blue-600 text-white rounded">
+            Sign In
+          </button>
+        </div>
       </div>
     );
   }
