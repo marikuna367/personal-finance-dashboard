@@ -5,8 +5,8 @@ import api from "./api";
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(Boolean(localStorage.getItem("token")));
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("demo@example.com");
+  const [password, setPassword] = useState("demo123");
 
   const handleSignIn = async () => {
     try {
