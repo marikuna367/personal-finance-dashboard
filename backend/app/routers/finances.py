@@ -93,7 +93,7 @@ def create_txn(account_id: int, txn_in: schemas.TransactionIn):
         txn = models.Transaction(
             account_id=account_id,
             amount=txn_in.amount,
-            date=txn_in.date,
+            date=txn_in.date or datetime.utcnow(),
             description=txn_in.description,
             category=txn_in.category
         )
@@ -108,7 +108,7 @@ async def create_txn_body(txn: schemas.TransactionIn):
         new_txn = models.Transaction(
             account_id=getattr(txn, "account_id", None),
             amount=txn.amount,
-            date=txn.date,
+            date=txn.date or datetime.utcnow(),
             description=txn.description,
             category=txn.category
         )

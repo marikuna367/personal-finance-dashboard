@@ -17,14 +17,14 @@ def get_password_hash(password: str) -> str:
 # Open session
 with Session(engine) as session:
     # Check if demo user exists using SQLModel query
-    statement = select(User).where(User.email == "demo@gmail.com")
+    statement = select(User).where(User.email == "demo@example.com")
     existing_user = session.exec(statement).first()
 
     if existing_user:
         print("Demo user already exists.")
     else:
         demo = User(
-            email="demo@gmail.com",
+            email="demo@example.com",
             hashed_password=get_password_hash("password")
         )
         session.add(demo)

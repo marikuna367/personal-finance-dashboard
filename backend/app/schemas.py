@@ -28,8 +28,7 @@ class TransactionIn(BaseModel):
     description: Optional[str] = None
     date: Optional[datetime] = None
 
-    class Config:
-        orm_mode = True
+    model_config = {"from_attributes": True}
 
 class TransactionOut(TransactionIn):
     id: int
