@@ -11,11 +11,11 @@ This repo contains a simple full-stack personal finance dashboard:
    cp backend/.env.example backend/.env
 
 ### Login Screen
-![Login Screen](/Users/cookiesncream/Desktop/Screenshot 2025-12-03 at 19.05.35.png)
+![LoginScreen](/images/images/Screenshot 2025-12-03 at 19.26.45.png)
 
 ### Transactions
-![Transactions](/Users/cookiesncream/Desktop/Screenshot 2025-12-03 at 19.06.55.png)
+![Transactions](/images/images/Screenshot 2025-12-03 at 19.06.55.png)
 
 ### Balance
-![Balance](/Users/cookiesncream/Desktop/Screenshot 2025-12-03 at 19.07.33.png)
+![Balance](/images/images/Screenshot 2025-12-03 at 19.07.33.png)
 
