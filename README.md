@@ -10,12 +10,3 @@ This repo contains a simple full-stack personal finance dashboard:
    ```bash
    cp backend/.env.example backend/.env
 
-### Login Screen
-![LoginScreen](/images/images/Screenshot 2025-12-03 at 19.26.45.png)
-
-### Transactions
-![Transactions](/images/images/Screenshot 2025-12-03 at 19.06.55.png)
-
-### Balance
-![Balance](/images/images/Screenshot 2025-12-03 at 19.07.33.png)
-
